@@ -9,7 +9,7 @@
         </div>
         <div class="row q-pa-md">
             <div class="col">
-                <q-badge color="secondary">Масштаб по X: {{ xScale }} </q-badge>
+                <q-badge color="secondary">Масштаб: {{ xScale }} </q-badge>
                 <q-slider
                     v-model="xScale"
                     :min="1"
@@ -18,10 +18,11 @@
                     label
                     color="light-green"
                     style="width: 300px"
+                    @change="renderFuncs()"
                 />
             </div>
         </div>
-        <div class="row q-pa-md">
+        <!-- <div class="row q-pa-md">
             <div class="col">
                 <q-badge color="secondary">Масштаб по Y: {{ yScale }} </q-badge>
                 <q-slider
@@ -34,7 +35,7 @@
                     style="width: 300px"
                 />
             </div>
-        </div>
+        </div> -->
         <div class="row justify-between">
             <div class="col">
                 <q-btn @click="updateDialog = true" label="Редактировать" />
@@ -50,7 +51,11 @@
                     <div class="text-h5">Добавить функцию</div>
                 </q-card-section>
                 <q-card-section>
-                    <q-input label="Имя функции" v-model="curFuncName" hint="Можно оставить пустым"/>
+                    <q-input
+                        label="Имя функции"
+                        v-model="curFuncName"
+                        hint="Можно оставить пустым"
+                    />
                 </q-card-section>
                 <q-card-section>
                     <div class="text-h7">Параметры функции</div>
@@ -147,9 +152,13 @@ export default {
             bCoef: null,
             cCoef: null,
             curFuncName: null,
-            xScale: 0,
-            yScale: 0,
+            xScale: 1,
+            yScale: 1,
             funcs: [],
+            xMin: 5,
+            xMax: 1000,
+            yMin: 5,
+            yMax: 1000,
         };
     },
 
@@ -204,6 +213,10 @@ export default {
     },
 
     methods: {
+        getFuncVal(a, b, c, x) {
+            return a * x ** 3 + b * x + c;
+        },
+
         updateChart() {},
 
         addChart() {
@@ -221,31 +234,53 @@ export default {
                 this.funcs.push({
                     name: this.curFuncName,
                     color: this.curFuncColor,
-                    parms: [this.aCoef, this.bCoef, this.cCoef]
-                });
-                this.dataCollection = {
-                    labels: [-20, 0, 10],
-                    datasets: [
-                        {
-                            label: "first dataset",
-                            data: [
-                                {
-                                    x: -10,
-                                    y: 0,
-                                },
-                                {
-                                    x: 0,
-                                    y: 10,
-                                },
-                                {
-                                    x: 10,
-                                    y: 5,
-                                },
-                            ],
-                        },
+                    parms: [
+                        Number(this.aCoef),
+                        Number(this.bCoef),
+                        Number(this.cCoef),
                     ],
-                };
+                });
+                this.renderFuncs();
             }
+        },
+
+        renderFuncs() {
+            let xx = [];
+            let xlb = ((this.xMax - 10 * this.xScale) / 2) * -1;
+            let xub = Math.abs(xlb);
+
+            // let ylb = ((this.yMax - 9.95 * this.yScale) / 2) * -1;
+            // let yub = Math.abs(ylb);
+
+            for (let i = xlb; i <= xub; i += 10) {
+                xx.push(i);
+            }
+
+            let ds = []; // datasets
+            this.funcs.forEach((f) => {
+                let yy = [];
+                console.log(f);
+                xx.forEach((x) => {
+                    yy.push(
+                        this.getFuncVal(f.parms[0], f.parms[1], f.parms[2], x)
+                    );
+                });
+                ds.push({
+                    label:
+                        f.name !== null && f.name !== ""
+                            ? `${f.name}: ${f.parms[0]}x^3 + ${f.parms[1]}x + ${f.parms[2]}`
+                            : `${f.parms[0]}x^3 + ${f.parms[1]}x + ${f.parms[2]}`,
+                    pointStyle: "line",
+                    backgroundColor: f.color,
+                    borderColor: f.color,
+                    fill: false,
+                    data: yy,
+                });
+            });
+            this.dataCollection = {
+                labels: xx,
+                datasets: ds,
+            };
         },
     },
 };
