@@ -120,14 +120,85 @@
                 </q-card-section>
             </q-card>
         </q-dialog>
-        <q-dialog v-model="updateDialog">
+        <q-dialog v-model="updateDialog" ref="updateDialog">
             <q-card style="width: 700px; max-width: 80vw;">
                 <q-card-section>
-                    <div class="text-h6">Update</div>
+                    <div class="text-h5">Редактировать функцию</div>
                 </q-card-section>
+                <q-card-section>
+                    <q-select
+                        v-model="currentSelector"
+                        :options="getAllFuncName"
+                        label="Выбрать функцию"
+                    />
+                </q-card-section>
+                <q-card-section>
+                    <q-input
+                        label="Имя функции"
+                        v-model="curFuncName"
+                        hint="Можно оставить пустым"
+                    />
+                </q-card-section>
+                <q-card-section>
+                    <div class="text-h7">Параметры функции</div>
 
-                <q-card-section class="q-pt-none">
-                    Click/Tap on the backdrop.
+                    <div id="formula">
+                        <q-input
+                            v-model="aCoef"
+                            label="A"
+                            class="coef-inp"
+                            :error="aIsWrong"
+                            error-message="Не числовое значение"
+                        />
+                        <q-input
+                            v-model="bCoef"
+                            label="B"
+                            class="coef-inp"
+                            :error="bIsWrong"
+                            error-message="Не числовое значение"
+                        />
+                        <q-input
+                            v-model="cCoef"
+                            label="C"
+                            class="coef-inp"
+                            :error="cIsWrong"
+                            error-message="Не числовое значение"
+                        />
+                    </div>
+                </q-card-section>
+                <q-card-section>
+                    <katex-element :expression="resExp" />
+                </q-card-section>
+                <q-card-section>
+                    <q-input
+                        label="Цвет"
+                        v-model="curFuncColor"
+                        :error="colorIsWrong"
+                        error-message="Неправильный цвет"
+                        hint="Цвет в HEX формате"
+                    >
+                        <template v-slot:append>
+                            <q-icon name="colorize" class="cursor-pointer">
+                                <q-popup-proxy :breakpoint="600">
+                                    <q-color
+                                        v-model="curFuncColor"
+                                        style="max-width: 250px"
+                                    />
+                                </q-popup-proxy>
+                            </q-icon>
+                        </template>
+                        <template v-slot:prepend>
+                            <q-icon name="label" :style="funcLabelColor" />
+                        </template>
+                    </q-input>
+                </q-card-section>
+                <q-card-section>
+                    <q-btn
+                        label="Закрыть"
+                        class="full-width"
+                        @click="updateDialog = false"
+                        color="primary"
+                    />
                 </q-card-section>
             </q-card>
         </q-dialog>
@@ -152,6 +223,7 @@ export default {
             bCoef: null,
             cCoef: null,
             curFuncName: null,
+            currentSelector: null,
             xScale: 1,
             yScale: 1,
             funcs: [],
@@ -163,6 +235,17 @@ export default {
     },
 
     computed: {
+        getAllFuncName() {
+            let out = [];
+            this.funcs.forEach((f, i) => {
+                out.push({
+                    label: `${i}. ${f.name}`,
+                    value: i,
+                });
+            });
+            return out;
+        },
+
         funcLabelColor() {
             return `color: ${this.curFuncColor}`;
         },
@@ -181,14 +264,17 @@ export default {
         },
 
         aIsWrong() {
+            if (this.aCoef == 0) return false;
             return isNaN(this.aCoef) || this.aCoef == "";
         },
 
         bIsWrong() {
+            if (this.bCoef == 0) return false;
             return isNaN(this.bCoef) || this.bCoef == "";
         },
 
         cIsWrong() {
+            if (this.cCoef == 0) return false;
             return isNaN(this.cCoef) || this.cCoef == "";
         },
 
@@ -199,13 +285,44 @@ export default {
     },
 
     watch: {
-        // aCoef(newVal) {
-        //     if (!isNaN(newVal)) {
-        //         this.$refs.aCoef.error = false;
-        //     } else {
-        //         this.$refs.aCoef.error = true;
-        //     }
-        // },
+        currentSelector(index) {
+            index = index.value;
+            this.curFuncName = this.funcs[index].name;
+            this.aCoef = Number(this.funcs[index].parms[0]);
+            this.bCoef = Number(this.funcs[index].parms[1]);
+            this.cCoef = Number(this.funcs[index].parms[2]);
+            this.curFuncColor = this.funcs[index].color;
+        },
+
+        updateDialog(newVal, oldVal) {
+            if (newVal == true && oldVal == false) return;
+            if (this.currentSelector == null) return;
+
+            if (this.aCoef === null) this.aCoef = "";
+            if (this.bCoef === null) this.bCoef = "";
+            if (this.cCoef === null) this.cCoef = "";
+
+            if (
+                !this.aIsWrong &&
+                !this.bIsWrong &&
+                !this.cIsWrong &&
+                !this.colorIsWrong
+            ) {
+                this.funcs[this.currentSelector.value] = {
+                    name: this.curFuncName,
+                    color: this.curFuncColor,
+                    parms: [
+                        Number(this.aCoef),
+                        Number(this.bCoef),
+                        Number(this.cCoef),
+                    ],
+                };
+                this.resetFormData();
+                this.renderFuncs();
+            } else {
+                this.updateDialog = true;
+            }
+        },
     },
 
     created() {
@@ -216,8 +333,6 @@ export default {
         getFuncVal(a, b, c, x) {
             return a * x ** 3 + b * x + c;
         },
-
-        updateChart() {},
 
         addChart() {
             if (this.aCoef === null) this.aCoef = "";
@@ -240,6 +355,7 @@ export default {
                         Number(this.cCoef),
                     ],
                 });
+                this.resetFormData();
                 this.renderFuncs();
             }
         },
@@ -281,6 +397,20 @@ export default {
                 labels: xx,
                 datasets: ds,
             };
+        },
+
+        resetFormData() {
+            this.aCoef = null;
+            this.bCoef = null;
+            this.cCoef = null;
+            this.curFuncName = null;
+            this.curFuncColor = "#e0b279";
+            this.currentSelector = null;
+        },
+
+        test() {
+            alert("test");
+            this.updateDialog = true;
         },
     },
 };
