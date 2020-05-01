@@ -1,5 +1,5 @@
 <template>
-    <q-page class="fit column wrap  items-center">
+    <q-page class="fit column wrap items-center">
         <div class="row q-pa-md">
             <div class="col"></div>
             <div class="col-12">

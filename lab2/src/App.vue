@@ -15,6 +15,10 @@ export default {
         MyMenu
     },
 
+    created() {
+        document.title = "Лабораторные работы";
+    },
+
     mounted() {
       document.title = "Лабораторная работа";
     },

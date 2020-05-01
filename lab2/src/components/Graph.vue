@@ -27,19 +27,6 @@ export default {
 
     created() {
         this.options = {
-            // responsive: true,
-            // title: {
-            //     display: true,
-            //     text: "График",
-            // },
-            // tooltip: {
-            //     mode: "index",
-            //     intersect: false,
-            // },
-            // hover: {
-            //     mode: "nearest",
-            //     intersect: true,
-            // },
             scales: {
                 xAxes: [
                     {
