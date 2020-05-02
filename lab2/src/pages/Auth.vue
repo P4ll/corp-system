@@ -1,6 +1,6 @@
 <template>
     <q-page class="flex flex-center column">
-        <q-form @submit="register()">
+        <div>
             <q-input
                 label="Логин"
                 v-model="login"
@@ -16,18 +16,21 @@
             <q-input
                 label="Пароль"
                 v-model="pass"
+                type="password"
                 :error="!isPassValid"
                 :error-message="passMess"
             />
             <q-input
                 label="Повторите пароль"
                 v-model="repPass"
+                type="password"
                 :error="!isRepPassValid"
                 error-message="Пароли должны совпадать"
             />
-            <q-input
+            <q-select
                 label="Страна"
                 v-model="country"
+                :options="countries"
                 :error="!isCountryValid"
                 error-message="Страна не была выбрана"
             />
@@ -38,20 +41,15 @@
                 :error-message="ageMess"
             />
             <q-btn
-                type="submit"
+                @click="register()"
                 label="Зарегистрироваться"
-                class="full-width"
+                class="full-width q-mt-md"
             />
-        </q-form>
+        </div>
     </q-page>
 </template>
 <script>
 export default {
-    /**
-     * TODO
-     * 1. Использовать watch на обычных свойствах
-     * 2. Все computed переместить в data
-     */
     data() {
         return {
             loginMess: null,
@@ -63,53 +61,123 @@ export default {
             repPass: null,
             country: null,
             age: null,
-            ageMEss: null,
+            ageMess: null,
+            isLoginValid: true,
+            isNameValid: true,
+            isPassValid: true,
+            isRepPassValid: true,
+            isCountryValid: true,
+            isAgeValid: true,
+            countries: ["Россия", "Украина", "Белорусь", "Казахстан"],
         };
     },
 
-    computed: {
-        isLoginValid() {
+    watch: {
+        login() {
             if (this.login.length < 3) {
                 this.loginMess = "Введено меньше 3-х символов";
-                return false;
-            }
-            if (/[a-zA-Z]/i.test(this.login)) {
-                return true;
+                this.isLoginValid = false;
+            } else if (/[a-zA-Z]/i.test(this.login)) {
+                this.isLoginValid = true;
             } else {
                 this.loginMess = "Только латинские символы";
-                return false;
+                this.isLoginValid = false;
             }
         },
 
-        isNameValid() {
+        name() {
             if (this.name.length < 3) {
                 this.nameMess = "Введено меньше 3-х символов";
-                return false;
+                this.isNameValid = false;
+            } else {
+                this.isNameValid = true;
             }
-            return true;
         },
 
-        isPassValid() {
+        pass() {
             if (/[а-яА-ЯёЁ]/i.test(this.pass)) {
                 this.passMess = "Нельзя использовать кириллицу";
-                return false;
-            }
-            if (this.pass.length < 3) {
+                this.isPassValid = false;
+            } else if (this.pass.length < 3) {
                 this.passMess = "Введено меньше 3-х символов";
-                return false;
+                this.isPassValid = false;
+            } else {
+                this.isPassValid = true;
             }
-            return true;
         },
 
-        isRepPassValid() {},
+        repPass() {
+            if (this.pass != this.repPass) {
+                this.isRepPassValid = false;
+            } else {
+                this.isRepPassValid = true;
+            }
+        },
 
-        isCountryValid() {},
+        country(newVal) {
+            if (newVal == "") {
+                this.isCountryValid = false;
+            } else {
+                this.isCountryValid = true;
+            }
+        },
 
-        isAgeValid() {},
+        age() {
+            console.log(this.age);
+            if (this.age == "") {
+                this.isAgeValid = false;
+                this.ageMess = "Введите возраст";
+            } else if (isNaN(this.age)) {
+                this.isAgeValid = false;
+                this.ageMess = "Введено не число";
+            } else if (Number(this.age) < 1 || Number(this.age) > 150) {
+                this.isAgeValid = false;
+                this.ageMess = "Возраст не принадлежит отрезку [1, 150]";
+            } else if (/[.,]/.test(this.age)) {
+                this.isAgeValid = false;
+                this.ageMess = "Введен нецелочисленный возраст";
+            } else {
+                this.isAgeValid = true;
+            }
+        },
     },
 
     methods: {
-        register() {},
+        emptyIfNull(str) {
+            if (str == null) return "";
+        },
+
+        register() {
+            if (this.login == null) return;
+            if (this.age == null) this.age = "";
+            if (this.country == null) this.country = "";
+
+            if (
+                this.isLoginValid &&
+                this.isPassValid &&
+                this.isRepPassValid &&
+                this.isNameValid &&
+                this.isCountryValid &&
+                this.isAgeValid
+            ) {
+                this.$q.notify({
+                    color: "positive",
+                    message: "Пользователь успешно зарегистрирован",
+                });
+                // TODO рега
+                this.login = null;
+                this.pass = null;
+                this.repPass = null;
+                this.age = null;
+                this.country = null;
+                this.name = null;
+            } else {
+                this.$q.notify({
+                    color: "negative",
+                    message: "Какие-то поля заполнены неверно",
+                });
+            }
+        },
     },
 };
 </script>
