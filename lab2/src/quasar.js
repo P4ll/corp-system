@@ -6,7 +6,7 @@ import "@quasar/extras/fontawesome-v5/fontawesome-v5.css";
 import "@quasar/extras/ionicons-v4/ionicons-v4.css";
 import "@quasar/extras/mdi-v4/mdi-v4.css";
 import "@quasar/extras/eva-icons/eva-icons.css";
-import { Quasar, Notify } from "quasar";
+import { Quasar, Notify, Meta, Dialog } from "quasar";
 
 Vue.use(Quasar, {
     config: {
@@ -31,5 +31,7 @@ Vue.use(Quasar, {
     },
     plugins: {
         Notify,
+        Meta,
+        Dialog
     },
 });

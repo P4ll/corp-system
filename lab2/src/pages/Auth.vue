@@ -69,11 +69,22 @@ export default {
             isCountryValid: true,
             isAgeValid: true,
             countries: ["Россия", "Украина", "Белорусь", "Казахстан"],
+            canLog: true,
+        };
+    },
+
+    meta() {
+        return {
+            title: "Страница регистрации",
         };
     },
 
     watch: {
         login() {
+            if (this.login == null) {
+                this.isLoginValid = true;
+                return;
+            }
             if (this.login.length < 3) {
                 this.loginMess = "Введено меньше 3-х символов";
                 this.isLoginValid = false;
@@ -86,6 +97,10 @@ export default {
         },
 
         name() {
+            if (this.name == null) {
+                this.isNameValid = true;
+                return;
+            }
             if (this.name.length < 3) {
                 this.nameMess = "Введено меньше 3-х символов";
                 this.isNameValid = false;
@@ -95,6 +110,10 @@ export default {
         },
 
         pass() {
+            if (this.pass == null) {
+                this.isPassValid = true;
+                return;
+            }
             if (/[а-яА-ЯёЁ]/i.test(this.pass)) {
                 this.passMess = "Нельзя использовать кириллицу";
                 this.isPassValid = false;
@@ -103,6 +122,9 @@ export default {
                 this.isPassValid = false;
             } else {
                 this.isPassValid = true;
+                if (this.repPass == this.pass) {
+                    this.isRepPassValid = true;
+                }
             }
         },
 
@@ -123,7 +145,10 @@ export default {
         },
 
         age() {
-            console.log(this.age);
+            if (this.age == null) {
+                this.isAgeValid = true;
+                return;
+            }
             if (this.age == "") {
                 this.isAgeValid = false;
                 this.ageMess = "Введите возраст";
@@ -148,9 +173,12 @@ export default {
         },
 
         register() {
-            if (this.login == null) return;
-            if (this.age == null) this.age = "";
-            if (this.country == null) this.country = "";
+            if (this.login == null) this.isLoginValid = false;
+            if (this.name == null) this.isNameValid = false;
+            if (this.pass == null) this.isPassValid = false;
+            if (this.repPass == null) this.isRepPassValid = false;
+            if (this.country == null) this.isCountryValid = false;
+            if (this.age == null) this.isAgeValid = false;
 
             if (
                 this.isLoginValid &&
@@ -160,21 +188,61 @@ export default {
                 this.isCountryValid &&
                 this.isAgeValid
             ) {
-                this.$q.notify({
-                    color: "positive",
-                    message: "Пользователь успешно зарегистрирован",
-                });
-                // TODO рега
+                let sha256 = require("js-sha256").sha256;
+                if (
+                    this.$store.getters.getAllUsersLogins.includes(this.login)
+                ) {
+                    this.$q.notify({
+                        color: "negative",
+                        message: "Такой логин уже используется",
+                    });
+                    this.isLoginValid = false;
+                    return;
+                }
+                let user = {
+                    login: this.login,
+                    pass: sha256(this.pass),
+                    name: this.name,
+                    age: this.age,
+                    country: this.country,
+                    funcs: [],
+                };
+
+                this.$store.dispatch("addNewUser", user);
+
                 this.login = null;
                 this.pass = null;
                 this.repPass = null;
                 this.age = null;
                 this.country = null;
                 this.name = null;
+                this.$q.notify({
+                    color: "positive",
+                    message: "Пользователь успешно зарегистрирован",
+                });
+                let timer = setTimeout(() => this.$router.push("/login"), 2000);
+                this.$q
+                    .dialog({
+                        title: "Автоматический переход на страницу входа",
+                        message:
+                            "Нажмите <b>Отмена</b>, чтобы остаться на странице",
+                        cancel: true,
+                        html: true,
+                    })
+                    .onOk(() => {
+                        clearTimeout(timer);
+                        this.$router.push("/login");
+                    })
+                    .onCancel(() => {
+                        clearTimeout(timer);
+                    })
+                    .onDismiss(() => {
+                        clearTimeout(timer);
+                    });
             } else {
                 this.$q.notify({
                     color: "negative",
-                    message: "Какие-то поля заполнены неверно",
+                    message: "Какие-то поля не заполнены / заполнены неверно",
                 });
             }
         },
