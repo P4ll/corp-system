@@ -213,6 +213,12 @@ export default {
         Graph,
     },
 
+    meta() {
+        return {
+            title: "График функции",
+        };
+    },
+
     data() {
         return {
             dataCollection: null,

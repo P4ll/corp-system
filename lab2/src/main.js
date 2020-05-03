@@ -8,9 +8,9 @@ import VueRouter from "vue-router";
 
 import GraphPage from "./pages/GraphPage.vue";
 import ErrorPage from "./pages/ErrorPage.vue";
-import AuthPage from "./pages/Auth.vue"
-import LogPage from "./pages/Log.vue"
-import UserDataPage from "./pages/UserData.vue"
+import AuthPage from "./pages/Auth.vue";
+import LogPage from "./pages/Log.vue";
+import UserDataPage from "./pages/UserData.vue";
 
 import Vuex from "vuex";
 import state from "./store/state.js";
@@ -31,7 +31,18 @@ Vue.use(Vuex);
 const router = new VueRouter({
     mode: "history",
     routes: [
-        { path: "/", redirect: "/chart" },
+        {
+            path: "*",
+            redirect: (to) => {
+                if (!state.auth) {
+                    return "/login";
+                }
+                else {
+                    return to;
+                }
+            },
+        },
+        { path: "/", redirect: "/login" },
         { path: "/chart", component: GraphPage },
         { path: "/auth", component: AuthPage },
         { path: "/login", component: LogPage },

@@ -19,7 +19,7 @@ export function unsetAuth(context) {
 }
 
 export function setCurrentUser(context, user) {
-    context.commit("setCurrentuser", user);
+    context.commit("setCurrentUser", user);
 }
 
 export function addNewUser(context, user) {
@@ -32,4 +32,15 @@ export function delUser(context, user) {
 
 export function updateUser(context, user) {
     context.commit("updateUser", user);
+}
+
+export function logIn(context, user) {
+    context.dispatch("setAuth");
+    context.dispatch("setCurrentUser", user);
+}
+
+export function logOut(context) {
+    context.dispatch("unsetAuth");
+    context.commit("setCurrentUser", null);
+    this.$router.push("/login");
 }

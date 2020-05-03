@@ -1,8 +1,8 @@
 <template>
     <q-page class="flex flex-center column">
         <q-form @submit="logIn()">
-            <q-input label="Логин" />
-            <q-input label="Пароль" />
+            <q-input v-model="login" label="Логин" :error="!isLoginValid" :error-message="loginMess"/>
+            <q-input v-model="pass" label="Пароль" type="password" :error="!isPassValid" :error-message="passMess"/>
             <q-btn type="submit" label="Войти" class="full-width q-mt-md" />
         </q-form>
     </q-page>
@@ -64,7 +64,37 @@ export default {
     },
 
     methods: {
-        logIn() {},
+        logIn() {
+            if (this.pass == null) this.isPassValid = false;
+            if (this.login == null) this.isLoginValid = false;
+
+            if (this.isLoginValid && this.isPassValid) {
+                let sha256 = require("js-sha256").sha256;
+                let hashed = sha256(this.pass);
+
+                let users = this.$store.getters.getAllUsers;
+                for (let i = 0; i < users.length; ++i) {
+                    if (
+                        users[i].login == this.login &&
+                        users[i].pass == hashed
+                    ) {
+                        this.$router.push("/chart");
+                        this.$store.dispatch("logIn", users[i]);
+
+                        this.$q.notify({
+                            color: "positive",
+                            message: "Вы успешно вошли в систему",
+                        });
+                        return;
+                    }
+                }
+            } else {
+                this.$q.notify({
+                    color: "negative",
+                    message: "Какие-то поля не заполнены / заполнены неверно",
+                });
+            }
+        },
     },
 };
 </script>
