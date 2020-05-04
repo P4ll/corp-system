@@ -20,8 +20,8 @@ import * as actions from "./store/actions.js";
 import persistedState from "vuex-persistedstate";
 
 import Vuei18n from "vue-i18n";
-import ruLang from "./langs/ru.js";
-import enLang from "./langs/en.js";
+import ru from "./langs/ru.js";
+import en from "./langs/en.js";
 
 Vue.use(Vuei18n);
 Vue.use(VueRouter);
@@ -51,14 +51,16 @@ const store = new Vuex.Store({
 });
 
 const messages = {
-    ruLang,
-    enLang,
+    ru,
+    en,
 };
 
 const i18n = new Vuei18n({
     locale: store.getters.getLang,
     messages,
 });
+
+Vue.config.lang
 
 new Vue({
     i18n,

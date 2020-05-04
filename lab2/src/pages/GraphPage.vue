@@ -9,7 +9,9 @@
         </div>
         <div class="row q-pa-md">
             <div class="col">
-                <q-badge color="secondary">Масштаб: {{ xScale }} </q-badge>
+                <q-badge color="secondary"
+                    >{{ this.$t("graph.scale") }}: {{ xScale }}
+                </q-badge>
                 <q-slider
                     v-model="xScale"
                     :min="1"
