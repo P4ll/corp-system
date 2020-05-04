@@ -31,17 +31,6 @@ Vue.use(Vuex);
 const router = new VueRouter({
     mode: "history",
     routes: [
-        {
-            path: "*",
-            redirect: (to) => {
-                if (!state.auth) {
-                    return "/login";
-                }
-                else {
-                    return to;
-                }
-            },
-        },
         { path: "/", redirect: "/login" },
         { path: "/chart", component: GraphPage },
         { path: "/auth", component: AuthPage },

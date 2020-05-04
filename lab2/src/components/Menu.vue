@@ -45,7 +45,7 @@
             <q-list>
                 <q-item clickable @click="$router.push('/chart')">
                     <q-item-section avatar>
-                        <q-icon name="shuffle" color="primary"/>
+                        <q-icon name="shuffle" color="primary" />
                     </q-item-section>
                     <q-item-section>
                         График функции
@@ -53,7 +53,7 @@
                 </q-item>
                 <q-item clickable @click="$router.push('/userdata')">
                     <q-item-section avatar>
-                        <q-icon name="account_circle" color="primary"/>
+                        <q-icon name="account_circle" color="primary" />
                     </q-item-section>
                     <q-item-section>
                         Профиль пользователя
@@ -86,7 +86,7 @@ export default {
 
         logOut() {
             this.$store.dispatch("logOut");
-            this.$$router.push("/login");
+            this.$router.push("/login");
             this.$q.notify({
                 color: "warning",
                 message: "Вы успешно вышли из системы",

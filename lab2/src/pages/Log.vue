@@ -1,10 +1,24 @@
 <template>
     <q-page class="flex flex-center column">
-        <q-form @submit="logIn()">
-            <q-input v-model="login" label="Логин" :error="!isLoginValid" :error-message="loginMess"/>
-            <q-input v-model="pass" label="Пароль" type="password" :error="!isPassValid" :error-message="passMess"/>
+        <q-form @submit="logIn()" v-if="!this.$store.getters.getAuthState">
+            <q-input
+                v-model="login"
+                label="Логин"
+                :error="!isLoginValid"
+                :error-message="loginMess"
+            />
+            <q-input
+                v-model="pass"
+                label="Пароль"
+                type="password"
+                :error="!isPassValid"
+                :error-message="passMess"
+            />
             <q-btn type="submit" label="Войти" class="full-width q-mt-md" />
         </q-form>
+        <div v-else>
+            <q-btn color="primary" @click="logOut()" label="Выйти" />
+        </div>
     </q-page>
 </template>
 <script>
@@ -64,6 +78,15 @@ export default {
     },
 
     methods: {
+        logOut() {
+            this.$store.dispatch("logOut");
+            this.$router.push("/login");
+            this.$q.notify({
+                color: "warning",
+                message: "Вы успешно вышли из системы",
+            });
+        },
+
         logIn() {
             if (this.pass == null) this.isPassValid = false;
             if (this.login == null) this.isLoginValid = false;
@@ -87,7 +110,20 @@ export default {
                         });
                         return;
                     }
+                    if (users[i].login == this.login) {
+                        this.$q.notify({
+                            color: "negative",
+                            message: "Неправильный пароль",
+                        });
+
+                        return;
+                    }
                 }
+
+                this.$q.notify({
+                    color: "negative",
+                    message: "Пользователь с таким логином не найден",
+                });
             } else {
                 this.$q.notify({
                     color: "negative",

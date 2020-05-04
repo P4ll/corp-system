@@ -28,6 +28,9 @@ export function addNewUser(context, user) {
 
 export function delUser(context, user) {
     context.commit("delUser", user);
+    if (context.getters.getCurrentUser.id == user.id) {
+        context.dispatch("logOut");
+    }
 }
 
 export function updateUser(context, user) {
@@ -42,5 +45,10 @@ export function logIn(context, user) {
 export function logOut(context) {
     context.dispatch("unsetAuth");
     context.commit("setCurrentUser", null);
-    this.$router.push("/login");
+}
+
+export function setUserFuncs(context, funcs) {
+    let cu = context.getters.getCurrentUser;
+    cu.funcs = funcs;
+    context.dispatch("updateUser", cu);
 }

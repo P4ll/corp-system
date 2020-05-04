@@ -38,11 +38,19 @@
         </div> -->
         <div class="row justify-between">
             <div class="col">
-                <q-btn @click="updateDialog = true" label="Редактировать" />
+                <q-btn
+                    color="primary"
+                    @click="updateDialog = true"
+                    label="Редактировать"
+                />
             </div>
             <div class="col"></div>
             <div class="col">
-                <q-btn @click="addDialog = true" label="Добавить" />
+                <q-btn
+                    color="primary"
+                    @click="addDialog = true"
+                    label="Добавить"
+                />
             </div>
         </div>
         <q-dialog v-model="addDialog">
@@ -232,12 +240,26 @@ export default {
             currentSelector: null,
             xScale: 1,
             yScale: 1,
-            funcs: [],
+            funcs: this.$store.getters.getCurrentUser.funcs,
             xMin: 5,
             xMax: 1000,
             yMin: 5,
             yMax: 1000,
         };
+    },
+
+    beforeCreate() {
+        if (!this.$store.getters.getAuthState) {
+            this.$router.push("/errorpage");
+        }
+    },
+
+    created() {
+        this.dataCollection = {};
+    },
+
+    mounted() {
+        this.renderFuncs();
     },
 
     computed: {
@@ -291,6 +313,10 @@ export default {
     },
 
     watch: {
+        funcs(newVal) {
+            this.$store.dispatch("setUserFuncs", newVal);
+        },
+
         currentSelector(index) {
             index = index.value;
             this.curFuncName = this.funcs[index].name;
@@ -329,10 +355,6 @@ export default {
                 this.updateDialog = true;
             }
         },
-    },
-
-    created() {
-        this.dataCollection = {};
     },
 
     methods: {
@@ -381,7 +403,6 @@ export default {
             let ds = []; // datasets
             this.funcs.forEach((f) => {
                 let yy = [];
-                console.log(f);
                 xx.forEach((x) => {
                     yy.push(
                         this.getFuncVal(f.parms[0], f.parms[1], f.parms[2], x)

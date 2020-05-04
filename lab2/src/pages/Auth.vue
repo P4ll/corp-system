@@ -79,6 +79,12 @@ export default {
         };
     },
 
+    beforeCreate() {
+        if (this.$store.getters.getAuthState) {
+            this.$router.push("login");
+        }
+    },
+
     watch: {
         login() {
             if (this.login == null) {
@@ -196,6 +202,7 @@ export default {
                         color: "negative",
                         message: "Такой логин уже используется",
                     });
+                    this.loginMess = "";
                     this.isLoginValid = false;
                     return;
                 }
@@ -206,6 +213,7 @@ export default {
                     age: this.age,
                     country: this.country,
                     funcs: [],
+                    isAdmin: false,
                 };
 
                 this.$store.dispatch("addNewUser", user);
@@ -220,7 +228,7 @@ export default {
                     color: "positive",
                     message: "Пользователь успешно зарегистрирован",
                 });
-                let timer = setTimeout(() => this.$router.push("/login"), 2000);
+                let timer = setTimeout(() => this.$router.push("/login"), 3000);
                 this.$q
                     .dialog({
                         title: "Автоматический переход на страницу входа",
@@ -228,6 +236,7 @@ export default {
                             "Нажмите <b>Отмена</b>, чтобы остаться на странице",
                         cancel: true,
                         html: true,
+                        parent: this,
                     })
                     .onOk(() => {
                         clearTimeout(timer);

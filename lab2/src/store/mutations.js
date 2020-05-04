@@ -32,6 +32,9 @@ export function delUser(state, user) {
 }
 
 export function updateUser(state, user) {
+    if (state.current.id == user.id) {
+        state.current = user;
+    }
     for (let i = 0; i < state.users.length; ++i) {
         if (state.users[i].id == user.id) {
             state.users[i] = user;
