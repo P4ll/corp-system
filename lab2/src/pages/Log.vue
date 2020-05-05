@@ -3,13 +3,13 @@
         <q-form @submit="logIn()" v-if="!this.$store.getters.getAuthState">
             <q-input
                 v-model="login"
-                label="Логин"
+                :label="this.$t('auth.login')"
                 :error="!isLoginValid"
                 :error-message="loginMess"
             />
             <q-input
                 v-model="pass"
-                label="Пароль"
+                :label="this.$t('auth.pass')"
                 type="password"
                 :error="!isPassValid"
                 :error-message="passMess"
@@ -17,7 +17,11 @@
             <q-btn type="submit" label="Войти" class="full-width q-mt-md" />
         </q-form>
         <div v-else>
-            <q-btn color="primary" @click="logOut()" label="Выйти" />
+            <q-btn
+                color="primary"
+                @click="logOut()"
+                :label="this.$t('menu.exit')"
+            />
         </div>
     </q-page>
 </template>
@@ -36,7 +40,7 @@ export default {
 
     meta() {
         return {
-            title: "Вход",
+            title: this.$t("log.title"),
         };
     },
 
@@ -47,12 +51,12 @@ export default {
                 return;
             }
             if (newVal.length < 3) {
-                this.loginMess = "Введено меньше 3-х символов";
+                this.loginMess = this.$t("auth.formErros.less3sym");
                 this.isLoginValid = false;
             } else if (/[a-zA-Z]/i.test(newVal)) {
                 this.isLoginValid = true;
             } else {
-                this.loginMess = "Только латинские символы";
+                this.loginMess = this.$t("auth.formErros.latinOnly");
                 this.isLoginValid = false;
             }
         },
@@ -63,10 +67,10 @@ export default {
                 return;
             }
             if (/[а-яА-ЯёЁ]/i.test(newVal)) {
-                this.passMess = "Нельзя использовать кириллицу";
+                this.passMess = this.$t("auth.formErros.noCyr");
                 this.isPassValid = false;
             } else if (newVal.length < 3) {
-                this.passMess = "Введено меньше 3-х символов";
+                this.passMess = this.$t("auth.formErros.less3sym");
                 this.isPassValid = false;
             } else {
                 this.isPassValid = true;
@@ -83,7 +87,7 @@ export default {
             this.$router.push("/login");
             this.$q.notify({
                 color: "warning",
-                message: "Вы успешно вышли из системы",
+                message: this.$t("log.nt.succExit"),
             });
         },
 
@@ -106,14 +110,14 @@ export default {
 
                         this.$q.notify({
                             color: "positive",
-                            message: "Вы успешно вошли в систему",
+                            message: this.$t("log.nt.succEnter"),
                         });
                         return;
                     }
                     if (users[i].login == this.login) {
                         this.$q.notify({
                             color: "negative",
-                            message: "Неправильный пароль",
+                            message: this.$t("log.nt.wrLog"),
                         });
 
                         return;
@@ -122,12 +126,12 @@ export default {
 
                 this.$q.notify({
                     color: "negative",
-                    message: "Пользователь с таким логином не найден",
+                    message: this.$t("log.nt.wrPass"),
                 });
             } else {
                 this.$q.notify({
                     color: "negative",
-                    message: "Какие-то поля не заполнены / заполнены неверно",
+                    message: this.$t("auth.nt.someInpIsWrong"),
                 });
             }
         },

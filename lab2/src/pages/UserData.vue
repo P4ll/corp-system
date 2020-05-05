@@ -4,7 +4,7 @@
             <div class="row">
                 <div class="col">
                     <q-input
-                        label="Логин"
+                        :label="this.$t('auth.login')"
                         v-model="login"
                         :error="!isLoginValid"
                         :error-message="loginMess"
@@ -16,14 +16,14 @@
                         color="primary"
                         v-if="!canWrite"
                         @click="canWrite = true"
-                        label="Редактировать"
+                        :label="this.$t('usrData.update')"
                         class="full-width q-mt-md"
                     />
                     <q-btn
                         color="primary"
                         v-else
                         @click="saveUserData()"
-                        label="Закончить редактирование"
+                        :label="this.$t('usrData.endUpdate')"
                         class="full-width q-mt-md"
                     />
                 </div>
@@ -31,7 +31,7 @@
             <div class="row">
                 <div class="col">
                     <q-input
-                        label="Имя"
+                        :label="this.$t('auth.name')"
                         v-model="name"
                         :error="!isNameValid"
                         :error-message="nameMess"
@@ -43,7 +43,7 @@
                         color="primary"
                         v-if="!canWrite"
                         @click="openSavePassMenu()"
-                        label="Изменить пароль"
+                        :label="this.$t('usrData.changePass')"
                         class="full-width q-mt-md"
                     />
                 </div>
@@ -51,11 +51,11 @@
             <div class="row">
                 <div class="col">
                     <q-select
-                        label="Страна"
+                        :label="this.$t('auth.country')"
                         v-model="country"
                         :options="countries"
                         :error="!isCountryValid"
-                        error-message="Страна не была выбрана"
+                        :error-message="this.$t('auth.fromErrors.country')"
                         :disable="!canWrite"
                     />
                 </div>
@@ -64,7 +64,7 @@
             <div class="row">
                 <div class="col">
                     <q-input
-                        label="Возраст"
+                        :label="this.$t('auth.age')"
                         v-model="age"
                         :error="!isAgeValid"
                         :error-message="ageMess"
@@ -77,12 +77,14 @@
         <q-dialog v-model="canChangePass" persistent>
             <q-card style="width: 400px;">
                 <q-card-section>
-                    <div class="text-h5">Изменить пароль</div>
+                    <div class="text-h5">
+                        {{ this.$t("usrData.changePass") }}
+                    </div>
                 </q-card-section>
                 <q-card-section>
                     <q-input
                         v-model="oldPass"
-                        label="Старый пароль"
+                        :label="this.$t('usrData.oldPass')"
                         type="password"
                     />
                 </q-card-section>
@@ -92,7 +94,7 @@
                         type="password"
                         :error="!isPassValid"
                         :error-message="passMess"
-                        label="Новый пароль"
+                        :label="this.$t('usrData.newPass')"
                     />
                 </q-card-section>
                 <q-card-section>
@@ -100,8 +102,8 @@
                         v-model="repPass"
                         type="password"
                         :error="!isRepPassValid"
-                        error-message="Пароли не совпадают"
-                        label="Повторите пароль"
+                        :error-message="this.$t('auth.formErrors.passEq')"
+                        :label="this.$t('auth.repPass')"
                     />
                 </q-card-section>
                 <q-card-section
@@ -109,13 +111,13 @@
                 >
                     <q-btn
                         color="primary"
-                        label="Отмена"
+                        :label="this.$t('usrData.cancel')"
                         @click="canChangePass = false"
                         class="q-mr-xl"
                     />
                     <q-btn
                         color="primary"
-                        label="Сохранить"
+                        :label="this.$t('usrData.save')"
                         @click="savePass()"
                         class="q-ml-xl"
                     />
@@ -147,13 +149,13 @@ export default {
             isRepPassValid: true,
             isCountryValid: true,
             isAgeValid: true,
-            countries: ["Россия", "Украина", "Белорусь", "Казахстан"],
+            countries: this.$t("auth.countries"),
         };
     },
 
     meta() {
         return {
-            title: "Панель настройки пользователя",
+            title: this.$t("usrData.title"),
         };
     },
 
@@ -178,12 +180,12 @@ export default {
                 return;
             }
             if (this.login.length < 3) {
-                this.loginMess = "Введено меньше 3-х символов";
+                this.loginMess = this.$t("auth.formErrors.less3sym");
                 this.isLoginValid = false;
             } else if (/[a-zA-Z]/i.test(this.login)) {
                 this.isLoginValid = true;
             } else {
-                this.loginMess = "Только латинские символы";
+                this.loginMess = this.$t("auth.formErrors.latinOnly");
                 this.isLoginValid = false;
             }
         },
@@ -194,7 +196,7 @@ export default {
                 return;
             }
             if (this.name.length < 3) {
-                this.nameMess = "Введено меньше 3-х символов";
+                this.nameMess = this.$t("auth.formErrors.less3sym");
                 this.isNameValid = false;
             } else {
                 this.isNameValid = true;
@@ -207,10 +209,10 @@ export default {
                 return;
             }
             if (/[а-яА-ЯёЁ]/i.test(this.pass)) {
-                this.passMess = "Нельзя использовать кириллицу";
+                this.passMess = this.$t("auth.formErrors.noCyr");
                 this.isPassValid = false;
             } else if (this.pass.length < 3) {
-                this.passMess = "Введено меньше 3-х символов";
+                this.passMess = this.$t("auth.formErrors.less3sym");
                 this.isPassValid = false;
             } else {
                 this.isPassValid = true;
@@ -243,16 +245,16 @@ export default {
             }
             if (this.age == "") {
                 this.isAgeValid = false;
-                this.ageMess = "Введите возраст";
+                this.ageMess = this.$t("auth.formErrors.ageInp");
             } else if (isNaN(this.age)) {
                 this.isAgeValid = false;
-                this.ageMess = "Введено не число";
+                this.ageMess = this.$t("auth.formErrors.notANumber");
             } else if (Number(this.age) < 1 || Number(this.age) > 150) {
                 this.isAgeValid = false;
-                this.ageMess = "Возраст не принадлежит отрезку [1, 150]";
+                this.ageMess = this.$t("auth.formErrors.wrNumb");
             } else if (/[.,]/.test(this.age)) {
                 this.isAgeValid = false;
-                this.ageMess = "Введен нецелочисленный возраст";
+                this.ageMess = this.$t("auth.formErrors.notAInt");
             } else {
                 this.isAgeValid = true;
             }
@@ -283,13 +285,13 @@ export default {
                 } else {
                     this.$q.notify({
                         color: "negative",
-                        message: "Такой логин уже используется",
+                        message: this.$t("auth.nt.usedLogin"),
                     });
                 }
             } else {
                 this.$q.notify({
                     color: "negative",
-                    message: "Какие-то поля не заполнены / заполнены неверно",
+                    message: this.$t("auth.nt.someInpIsWrong"),
                 });
             }
         },
@@ -305,7 +307,7 @@ export default {
             if (this.oldPass == null || this.oldPass == "") {
                 this.$q.notify({
                     color: "negative",
-                    message: "Введите старый пароль",
+                    message: this.$t("usrData.nt.inpOldPass"),
                 });
                 return;
             }
@@ -315,7 +317,7 @@ export default {
             if (oldHash != usr.pass) {
                 this.$q.notify({
                     color: "negative",
-                    message: "Старый пароль неверен",
+                    message: this.$t("usrData.nt.oldPassWrong"),
                 });
                 return;
             }
@@ -325,7 +327,7 @@ export default {
                 this.canChangePass = false;
                 this.$q.notify({
                     color: "positive",
-                    message: "Пароль успешно сменен",
+                    message: this.$t("usrData.nt.success"),
                 });
             }
         },

@@ -2,47 +2,47 @@
     <q-page class="flex flex-center column">
         <div>
             <q-input
-                label="Логин"
+                :label="this.$t('auth.login')"
                 v-model="login"
                 :error="!isLoginValid"
                 :error-message="loginMess"
             />
             <q-input
-                label="Имя"
+                :label="this.$t('auth.name')"
                 v-model="name"
                 :error="!isNameValid"
                 :error-message="nameMess"
             />
             <q-input
-                label="Пароль"
+                :label="this.$t('auth.pass')"
                 v-model="pass"
                 type="password"
                 :error="!isPassValid"
                 :error-message="passMess"
             />
             <q-input
-                label="Повторите пароль"
+                :label="this.$t('auth.repPass')"
                 v-model="repPass"
                 type="password"
                 :error="!isRepPassValid"
-                error-message="Пароли должны совпадать"
+                :error-message="this.$t('auth.formErrors.passEq')"
             />
             <q-select
-                label="Страна"
+                :label="this.$t('auth.country')"
                 v-model="country"
                 :options="countries"
                 :error="!isCountryValid"
-                error-message="Страна не была выбрана"
+                :error-message="this.$t('auth.formErrors.county')"
             />
             <q-input
-                label="Возраст"
+                :label="this.$t('auth.age')"
                 v-model="age"
                 :error="!isAgeValid"
                 :error-message="ageMess"
             />
             <q-btn
                 @click="register()"
-                label="Зарегистрироваться"
+                :label="this.$t('auth.reg')"
                 class="full-width q-mt-md"
             />
         </div>
@@ -68,14 +68,14 @@ export default {
             isRepPassValid: true,
             isCountryValid: true,
             isAgeValid: true,
-            countries: ["Россия", "Украина", "Белорусь", "Казахстан"],
+            countries: this.$t("auth.countries"),
             canLog: true,
         };
     },
 
     meta() {
         return {
-            title: "Страница регистрации",
+            title: this.$t("auth.title"),
         };
     },
 
@@ -92,12 +92,12 @@ export default {
                 return;
             }
             if (this.login.length < 3) {
-                this.loginMess = "Введено меньше 3-х символов";
+                this.loginMess = this.$t("auth.formErrors.less3sym");
                 this.isLoginValid = false;
             } else if (/[a-zA-Z]/i.test(this.login)) {
                 this.isLoginValid = true;
             } else {
-                this.loginMess = "Только латинские символы";
+                this.loginMess = this.$t("auth.formErrors.latinOnly");
                 this.isLoginValid = false;
             }
         },
@@ -108,7 +108,7 @@ export default {
                 return;
             }
             if (this.name.length < 3) {
-                this.nameMess = "Введено меньше 3-х символов";
+                this.nameMess = this.$t("auth.formErrors.less3sym");
                 this.isNameValid = false;
             } else {
                 this.isNameValid = true;
@@ -121,10 +121,10 @@ export default {
                 return;
             }
             if (/[а-яА-ЯёЁ]/i.test(this.pass)) {
-                this.passMess = "Нельзя использовать кириллицу";
+                this.passMess = this.$t("auth.formErrors.noCyr");
                 this.isPassValid = false;
             } else if (this.pass.length < 3) {
-                this.passMess = "Введено меньше 3-х символов";
+                this.passMess = this.$t("auth.formErrors.less3sym");
                 this.isPassValid = false;
             } else {
                 this.isPassValid = true;
@@ -157,16 +157,16 @@ export default {
             }
             if (this.age == "") {
                 this.isAgeValid = false;
-                this.ageMess = "Введите возраст";
+                this.ageMess = this.$t("auth.formErrors.ageInp");
             } else if (isNaN(this.age)) {
                 this.isAgeValid = false;
-                this.ageMess = "Введено не число";
+                this.ageMess = this.$t("auth.formErrors.notANumber");
             } else if (Number(this.age) < 1 || Number(this.age) > 150) {
                 this.isAgeValid = false;
-                this.ageMess = "Возраст не принадлежит отрезку [1, 150]";
+                this.ageMess = this.$t("auth.formErrors.wrNumb");
             } else if (/[.,]/.test(this.age)) {
                 this.isAgeValid = false;
-                this.ageMess = "Введен нецелочисленный возраст";
+                this.ageMess = this.$t("auth.formErrors.notAInt");
             } else {
                 this.isAgeValid = true;
             }
@@ -200,7 +200,7 @@ export default {
                 ) {
                     this.$q.notify({
                         color: "negative",
-                        message: "Такой логин уже используется",
+                        message: this.$t("auth.nt.usedLogin"),
                     });
                     this.loginMess = "";
                     this.isLoginValid = false;
@@ -226,14 +226,13 @@ export default {
                 this.name = null;
                 this.$q.notify({
                     color: "positive",
-                    message: "Пользователь успешно зарегистрирован",
+                    message: this.$t("auth.nt.succesReg"),
                 });
                 let timer = setTimeout(() => this.$router.push("/login"), 3000);
                 this.$q
                     .dialog({
-                        title: "Автоматический переход на страницу входа",
-                        message:
-                            "Нажмите <b>Отмена</b>, чтобы остаться на странице",
+                        title: this.$t("auth.nt.authRed"),
+                        message: this.$t("auth.nt.stOnPage"),
                         cancel: true,
                         html: true,
                         parent: this,
@@ -251,7 +250,7 @@ export default {
             } else {
                 this.$q.notify({
                     color: "negative",
-                    message: "Какие-то поля не заполнены / заполнены неверно",
+                    message: this.$t("auth.nt.someInpIsWrong"),
                 });
             }
         },

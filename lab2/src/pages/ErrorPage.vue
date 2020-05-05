@@ -2,12 +2,12 @@
     <q-page class="fit column wrap items-center">
         <img src="../assets/oops.jpg" @click="getBack()" class="cursor-pointer"/>
         <p>
-            Ошибка 404
+            {{this.$t('errorPage.error404')}}
         </p>
         <p>
-            Страница не нашлась
+            {{this.$t('errorPage.pageNF')}}
         </p>
-        <q-btn label="На главную" @click="getBack()"/>
+        <q-btn :label="this.$t('errorPage.onMain')" @click="getBack()"/>
     </q-page>
 </template>
 <script>

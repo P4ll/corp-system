@@ -56,11 +56,11 @@ const messages = {
 };
 
 const i18n = new Vuei18n({
-    locale: store.getters.getLang,
+    locale: store.state.lang,
     messages,
 });
 
-Vue.config.lang
+// Vue.config.lang = "ru";
 
 new Vue({
     i18n,

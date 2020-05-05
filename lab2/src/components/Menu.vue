@@ -12,23 +12,57 @@
                 />
 
                 <q-toolbar-title>
-                    Лабораторная работа
+                    {{ this.$t("menu.siteTitle") }}
                 </q-toolbar-title>
+                <div class="q-mr-md">
+                    <q-btn-dropdown
+                        split
+                        class="glossy"
+                        color="primary"
+                        :label="currLang"
+                    >
+                        <q-list>
+                            <q-item
+                                clickable
+                                v-close-popup
+                                @click="changeLang('ru')"
+                            >
+                                <q-item-section>
+                                    <q-item-label>{{
+                                        this.$t("menu.lang.ru")
+                                    }}</q-item-label>
+                                </q-item-section>
+                            </q-item>
+
+                            <q-item
+                                clickable
+                                v-close-popup
+                                @click="changeLang('en')"
+                            >
+                                <q-item-section>
+                                    <q-item-label>{{
+                                        this.$t("menu.lang.en")
+                                    }}</q-item-label>
+                                </q-item-section>
+                            </q-item>
+                        </q-list>
+                    </q-btn-dropdown>
+                </div>
                 <div class="flex" v-if="!this.$store.getters.getAuthState">
                     <div class="q-mx-md cursor-pointer" @click="goLogIn()">
-                        Войти
+                        {{ this.$t("menu.enter") }}
                     </div>
                     <div class="q-mx-md cursor-pointer" @click="goSignUp()">
-                        Зарегистрироваться
+                        {{ this.$t("menu.reg") }}
                     </div>
                 </div>
                 <div class="flex" v-else>
-                    <div>Вы вошли как</div>
+                    <div>{{ this.$t("menu.hello") }}</div>
                     <div class="q-ml-sm cursor-pointer" @click="goProfile()">
                         {{ $store.getters.getCurrentUser.login }}
                     </div>
                     <div class="q-mx-md cursor-pointer" @click="logOut()">
-                        Выйти
+                        {{ this.$t("menu.exit") }}
                     </div>
                 </div>
             </q-toolbar>
@@ -48,7 +82,7 @@
                         <q-icon name="shuffle" color="primary" />
                     </q-item-section>
                     <q-item-section>
-                        График функции
+                        {{ this.$t("menu.funcChart") }}
                     </q-item-section>
                 </q-item>
                 <q-item clickable @click="$router.push('/userdata')">
@@ -56,7 +90,7 @@
                         <q-icon name="account_circle" color="primary" />
                     </q-item-section>
                     <q-item-section>
-                        Профиль пользователя
+                        {{ this.$t("menu.userProfile") }}
                     </q-item-section>
                 </q-item>
             </q-list>
@@ -67,6 +101,7 @@
 export default {
     data() {
         return {
+            currLang: this.$store.getters.getLang,
             left: false,
         };
     },
@@ -89,8 +124,14 @@ export default {
             this.$router.push("/login");
             this.$q.notify({
                 color: "warning",
-                message: "Вы успешно вышли из системы",
+                message: this.$t("menu.nt.exit"),
             });
+        },
+
+        changeLang(lang) {
+            this.$i18n.locale = lang;
+            this.$store.dispatch("setLang", lang);
+            this.currLang = lang;
         },
     },
 };

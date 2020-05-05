@@ -43,7 +43,7 @@
                 <q-btn
                     color="primary"
                     @click="updateDialog = true"
-                    label="Редактировать"
+                    :label="this.$t('graph.change')"
                 />
             </div>
             <div class="col"></div>
@@ -51,24 +51,26 @@
                 <q-btn
                     color="primary"
                     @click="addDialog = true"
-                    label="Добавить"
+                    :label="this.$t('graph.add')"
                 />
             </div>
         </div>
         <q-dialog v-model="addDialog">
             <q-card style="width: 700px; max-width: 80vw;">
                 <q-card-section>
-                    <div class="text-h5">Добавить функцию</div>
+                    <div class="text-h5">{{ this.$t("graph.addFunc") }}</div>
                 </q-card-section>
                 <q-card-section>
                     <q-input
-                        label="Имя функции"
+                        :label="this.$t('graph.addDialog.funcName')"
                         v-model="curFuncName"
-                        hint="Можно оставить пустым"
+                        :hint="this.$t('graph.addDialog.addHint')"
                     />
                 </q-card-section>
                 <q-card-section>
-                    <div class="text-h7">Параметры функции</div>
+                    <div class="text-h7">
+                        {{ this.$t("graph.addDialog.funcsParms") }}
+                    </div>
 
                     <div id="formula">
                         <q-input
@@ -76,21 +78,27 @@
                             label="A"
                             class="coef-inp"
                             :error="aIsWrong"
-                            error-message="Не числовое значение"
+                            :error-message="
+                                this.$t('graph.addDialog.notANumber')
+                            "
                         />
                         <q-input
                             v-model="bCoef"
                             label="B"
                             class="coef-inp"
                             :error="bIsWrong"
-                            error-message="Не числовое значение"
+                            :error-message="
+                                this.$t('graph.addDialog.notANumber')
+                            "
                         />
                         <q-input
                             v-model="cCoef"
                             label="C"
                             class="coef-inp"
                             :error="cIsWrong"
-                            error-message="Не числовое значение"
+                            :error-message="
+                                this.$t('graph.addDialog.notANumber')
+                            "
                         />
                     </div>
                 </q-card-section>
@@ -99,11 +107,11 @@
                 </q-card-section>
                 <q-card-section>
                     <q-input
-                        label="Цвет"
+                        :label="this.$t('graph.addDialog.color')"
                         v-model="curFuncColor"
                         :error="colorIsWrong"
-                        error-message="Неправильный цвет"
-                        hint="Цвет в HEX формате"
+                        :error-message="this.$t('graph.addDialog.colorError')"
+                        :hint="this.$t('graph.addDialog.colorHint')"
                     >
                         <template v-slot:append>
                             <q-icon name="colorize" class="cursor-pointer">
@@ -122,7 +130,7 @@
                 </q-card-section>
                 <q-card-section>
                     <q-btn
-                        label="Добавить"
+                        :label="this.$t('graph.add')"
                         class="full-width"
                         @click="addChart()"
                         color="primary"
@@ -133,24 +141,28 @@
         <q-dialog v-model="updateDialog" ref="updateDialog">
             <q-card style="width: 700px; max-width: 80vw;">
                 <q-card-section>
-                    <div class="text-h5">Редактировать функцию</div>
+                    <div class="text-h5">
+                        {{ this.$t("graph.updateDialog.updateFunc") }}
+                    </div>
                 </q-card-section>
                 <q-card-section>
                     <q-select
                         v-model="currentSelector"
                         :options="getAllFuncName"
-                        label="Выбрать функцию"
+                        :label="this.$t('graph.updateDialog.selectFunc')"
                     />
                 </q-card-section>
                 <q-card-section>
                     <q-input
-                        label="Имя функции"
+                        :label="this.$t('graph.addDialog.funcName')"
                         v-model="curFuncName"
-                        hint="Можно оставить пустым"
+                        :hint="this.$t('graph.addDialog.addHint')"
                     />
                 </q-card-section>
                 <q-card-section>
-                    <div class="text-h7">Параметры функции</div>
+                    <div class="text-h7">
+                        {{ this.$t("graph.addDialog.funcsParms") }}
+                    </div>
 
                     <div id="formula">
                         <q-input
@@ -158,21 +170,21 @@
                             label="A"
                             class="coef-inp"
                             :error="aIsWrong"
-                            error-message="Не числовое значение"
+                            :error-message="this.$t('graph.addDialog.notANumber')"
                         />
                         <q-input
                             v-model="bCoef"
                             label="B"
                             class="coef-inp"
                             :error="bIsWrong"
-                            error-message="Не числовое значение"
+                            :error-message="this.$t('graph.addDialog.notANumber')"
                         />
                         <q-input
                             v-model="cCoef"
                             label="C"
                             class="coef-inp"
                             :error="cIsWrong"
-                            error-message="Не числовое значение"
+                            :error-message="this.$t('graph.addDialog.notANumber')"
                         />
                     </div>
                 </q-card-section>
@@ -181,11 +193,11 @@
                 </q-card-section>
                 <q-card-section>
                     <q-input
-                        label="Цвет"
+                        :label="this.$t('graph.addDialog.color')"
                         v-model="curFuncColor"
                         :error="colorIsWrong"
-                        error-message="Неправильный цвет"
-                        hint="Цвет в HEX формате"
+                        :error-message="this.$t('graph.addDialog.colorError')"
+                        :hint="this.$t('graph.addDialog.colorHint')"
                     >
                         <template v-slot:append>
                             <q-icon name="colorize" class="cursor-pointer">
@@ -204,7 +216,7 @@
                 </q-card-section>
                 <q-card-section>
                     <q-btn
-                        label="Закрыть"
+                        :label="this.$t('graph.close')"
                         class="full-width"
                         @click="updateDialog = false"
                         color="primary"
@@ -225,7 +237,7 @@ export default {
 
     meta() {
         return {
-            title: "График функции",
+            title: this.$t('graph.title'),
         };
     },
 

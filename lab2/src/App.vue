@@ -1,6 +1,6 @@
 <template>
     <q-layout view="hHh lpR fFf">
-        <my-menu/>
+        <my-menu />
         <q-page-container>
             <router-view />
         </q-page-container>
@@ -8,16 +8,15 @@
 </template>
 
 <script>
-import MyMenu from './components/Menu.vue'
+import MyMenu from "./components/Menu.vue";
 
 export default {
     components: {
-        MyMenu
+        MyMenu,
     },
 
     data() {
-        return {
-        };
+        return {};
     },
 };
 </script>
