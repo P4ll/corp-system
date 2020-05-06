@@ -18,6 +18,9 @@ export default {
         updateDialog: {
             updateFunc: "Edit function",
             selectFunc: "Select function",
+            delFuncErr: "Function not selected",
+            delFunc: "Delete",
+            delSucc: "function successfully deleted",
         },
     },
     menu: {

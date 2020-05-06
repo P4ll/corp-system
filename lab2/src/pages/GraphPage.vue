@@ -145,12 +145,21 @@
                         {{ this.$t("graph.updateDialog.updateFunc") }}
                     </div>
                 </q-card-section>
-                <q-card-section>
+                <q-card-section class="fit row">
                     <q-select
+                        class="col-9"
                         v-model="currentSelector"
                         :options="getAllFuncName"
                         :label="this.$t('graph.updateDialog.selectFunc')"
                     />
+                    <div class="col-3 q-mt-md">
+                        <q-btn
+                            :label="this.$t('graph.updateDialog.delFunc')"
+                            color="warning"
+                            class="full-width"
+                            @click="delFunc()"
+                        />
+                    </div>
                 </q-card-section>
                 <q-card-section>
                     <q-input
@@ -170,21 +179,27 @@
                             label="A"
                             class="coef-inp"
                             :error="aIsWrong"
-                            :error-message="this.$t('graph.addDialog.notANumber')"
+                            :error-message="
+                                this.$t('graph.addDialog.notANumber')
+                            "
                         />
                         <q-input
                             v-model="bCoef"
                             label="B"
                             class="coef-inp"
                             :error="bIsWrong"
-                            :error-message="this.$t('graph.addDialog.notANumber')"
+                            :error-message="
+                                this.$t('graph.addDialog.notANumber')
+                            "
                         />
                         <q-input
                             v-model="cCoef"
                             label="C"
                             class="coef-inp"
                             :error="cIsWrong"
-                            :error-message="this.$t('graph.addDialog.notANumber')"
+                            :error-message="
+                                this.$t('graph.addDialog.notANumber')
+                            "
                         />
                     </div>
                 </q-card-section>
@@ -237,7 +252,7 @@ export default {
 
     meta() {
         return {
-            title: this.$t('graph.title'),
+            title: this.$t("graph.title"),
         };
     },
 
@@ -372,6 +387,27 @@ export default {
     },
 
     methods: {
+        delFunc() {
+            if (this.currentSelector == null) {
+                this.$q.notify({
+                    color: "negative",
+                    message: this.$t("graph.updateDialog.delFuncErr"),
+                });
+            } else {
+                let pos = this.currentSelector.value;
+                this.$q.notify({
+                    color: "positive",
+                    message: `${this.currentSelector.label}\n${this.$t(
+                        "graph.updateDialog.delSucc"
+                    )}`,
+                });
+                this.funcs.splice(pos, 1);
+                this.$store.dispatch("setUserFuncs", this.funcs);
+                this.resetFormData();
+                this.renderFuncs();
+            }
+        },
+
         getFuncVal(a, b, c, x) {
             return a * x ** 3 + b * x + c;
         },

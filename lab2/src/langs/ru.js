@@ -18,6 +18,9 @@ export default {
         updateDialog: {
             updateFunc: "Редактировать функцию",
             selectFunc: "Выбрать функцию",
+            delFuncErr: "Не была выбрана функция для удаления",
+            delFunc: "Удалить",
+            delSucc: "функция успешно удалена",
         },
     },
     menu: {
