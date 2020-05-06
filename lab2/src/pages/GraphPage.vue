@@ -24,20 +24,6 @@
                 />
             </div>
         </div>
-        <!-- <div class="row q-pa-md">
-            <div class="col">
-                <q-badge color="secondary">Масштаб по Y: {{ yScale }} </q-badge>
-                <q-slider
-                    v-model="yScale"
-                    :min="1"
-                    :max="100"
-                    :step="1"
-                    label
-                    color="light-green"
-                    style="width: 300px"
-                />
-            </div>
-        </div> -->
         <div class="row justify-between">
             <div class="col">
                 <q-btn
@@ -442,9 +428,6 @@ export default {
             let xx = [];
             let xlb = ((this.xMax - 10 * this.xScale) / 2) * -1;
             let xub = Math.abs(xlb);
-
-            // let ylb = ((this.yMax - 9.95 * this.yScale) / 2) * -1;
-            // let yub = Math.abs(ylb);
 
             for (let i = xlb; i <= xub; i += 10) {
                 xx.push(i);
