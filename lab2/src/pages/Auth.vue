@@ -1,12 +1,20 @@
 <template>
     <q-page class="flex flex-center column">
         <div>
-            <q-input
-                :label="this.$t('auth.login')"
-                v-model="login"
-                :error="!isLoginValid"
-                :error-message="loginMess"
-            />
+            <div class="fit row">
+                <div class="col-9">
+                    <q-input
+                        :label="this.$t('auth.login')"
+                        v-model="login"
+                        :error="!isLoginValid"
+                        :error-message="loginMess"
+                    />
+                </div>
+                <div class="col-3 q-mt-md">
+                    <toggle-button v-model="isAdm" />
+                </div>
+                <div class="col q-mt-md">{{ this.$t("auth.isAdm") }}</div>
+            </div>
             <q-input
                 :label="this.$t('auth.name')"
                 v-model="name"
@@ -49,9 +57,15 @@
     </q-page>
 </template>
 <script>
+import { ToggleButton } from "vue-js-toggle-button";
+
 export default {
+    components: {
+        ToggleButton,
+    },
     data() {
         return {
+            isAdm: false,
             loginMess: null,
             login: null,
             nameMess: null,
@@ -213,7 +227,7 @@ export default {
                     age: this.age,
                     country: this.country,
                     funcs: [],
-                    isAdmin: false,
+                    isAdmin: this.isAdm,
                 };
 
                 this.$store.dispatch("addNewUser", user);

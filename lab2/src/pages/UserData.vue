@@ -2,6 +2,28 @@
     <q-page class="fit column wrap items-center">
         <div class="q-mt-md">
             <div class="row">
+                <div class="col" v-if="this.$store.getters.isAdmin">
+                    <q-select
+                        v-model="selectedUserLogin"
+                        use-input
+                        hide-selected
+                        fill-input
+                        input-debounce="0"
+                        :options="options"
+                        @filter="filterFn"
+                        :hint="this.$t('usrData.uSel')"
+                    >
+                        <template v-slot:no-option>
+                            <q-item>
+                                <q-item-section class="text-grey">
+                                    No results
+                                </q-item-section>
+                            </q-item>
+                        </template>
+                    </q-select>
+                </div>
+            </div>
+            <div class="row">
                 <div class="col">
                     <q-input
                         :label="this.$t('auth.login')"
@@ -59,7 +81,15 @@
                         :disable="!canWrite"
                     />
                 </div>
-                <div class="col"></div>
+                <div class="col q-pl-lg">
+                    <q-btn
+                        color="negative"
+                        v-if="!canWrite"
+                        @click="delUser()"
+                        :label="this.$t('usrData.delUser')"
+                        class="full-width q-mt-md"
+                    />
+                </div>
             </div>
             <div class="row">
                 <div class="col">
@@ -130,6 +160,9 @@
 export default {
     data() {
         return {
+            currUser: null,
+            options: null,
+            selectedUserLogin: null,
             oldPass: null,
             canChangePass: false,
             canWrite: false,
@@ -166,14 +199,27 @@ export default {
     },
 
     beforeMount() {
-        let curUser = this.$store.getters.getCurrentUser;
-        this.login = curUser.login;
-        this.name = curUser.name;
-        this.age = curUser.age;
-        this.country = curUser.country;
+        this.resetToDef();
+    },
+
+    computed: {
+        allUsersLogins() {
+            return this.$store.getters.getAllUsersLogins;
+        },
     },
 
     watch: {
+        selectedUserLogin(newVal) {
+            this.$store.dispatch("getUserByLogin", newVal).then((val) => {
+                this.currUser = val;
+                this.login = this.currUser.login;
+                this.name = this.currUser.name;
+                this.age = this.currUser.age;
+                this.country = this.currUser.country;
+                this.options = this.allUsersLogins;
+            });
+        },
+
         login() {
             if (this.login == null) {
                 this.isLoginValid = true;
@@ -262,6 +308,27 @@ export default {
     },
 
     methods: {
+        delUser() {
+            this.$q
+                .dialog({
+                    title: this.$t("usrData.nt.isOk"),
+                    message: this.$t("usrData.nt.delMess"),
+                    cancel: true,
+                    persistent: true,
+                })
+                .onOk(() => {
+                    this.$store.dispatch("delUser", this.currUser);
+                    if (
+                        this.$store.getters.getCurrentUser.id ==
+                        this.currUser.id
+                    ) {
+                        this.$router.push("/login");
+                    } else {
+                        this.resetToDef();
+                    }
+                });
+        },
+
         saveUserData() {
             if (
                 this.isLoginValid &&
@@ -273,9 +340,9 @@ export default {
                     !this.$store.getters.getAllUsersLogins.includes(
                         this.login
                     ) ||
-                    this.$store.getters.getCurrentUser.login == this.login
+                    this.currUser.login == this.login
                 ) {
-                    let usr = this.$store.getters.getCurrentUser;
+                    let usr = this.currUser;
                     usr.name = this.name;
                     usr.login = this.login;
                     usr.age = this.age;
@@ -311,7 +378,7 @@ export default {
                 });
                 return;
             }
-            let usr = this.$store.getters.getCurrentUser;
+            let usr = this.currUser;
             let sha256 = require("js-sha256").sha256;
             let oldHash = sha256(this.oldPass);
             if (oldHash != usr.pass) {
@@ -330,6 +397,35 @@ export default {
                     message: this.$t("usrData.nt.success"),
                 });
             }
+        },
+
+        filterFn(val, update) {
+            update(() => {
+                const needle = val.toLowerCase();
+                this.options = this.allUsersLogins.filter(
+                    (v) => v.toLowerCase().indexOf(needle) > -1
+                );
+            });
+        },
+
+        resetToDef() {
+            this.currUser = this.$store.getters.getCurrentUser;
+            this.login = this.currUser.login;
+            this.name = this.currUser.name;
+            this.age = this.currUser.age;
+            this.country = this.currUser.country;
+            this.options = this.allUsersLogins;
+            this.selectedUserLogin = this.login;
+        },
+
+        resetToNull() {
+            this.currUser = null;
+            this.login = null;
+            this.name = null;
+            this.age = null;
+            this.country = null;
+            this.options = null;
+            this.selectedUserLogin = null;
         },
     },
 };

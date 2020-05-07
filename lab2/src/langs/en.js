@@ -49,6 +49,7 @@ export default {
         age: "Age",
         reg: "Registration",
         countries: ["Russia", "Ukraine", "Belarus", "Kazakhstan"],
+        isAdm: "Is Admin?",
         formErrors: {
             passEq: "Passwords must match",
             country: "The country was not selected",
@@ -78,10 +79,14 @@ export default {
         newPass: "New password",
         cancel: "Cancel",
         save: "Save",
+        delUser: "Delete user",
+        uSel: "Select user",
         nt: {
             inpOldPass: "Enter your old password",
             oldPassWrong: "Old password is incorrect",
             success: "Password changed successfully",
+            isOk: "Are you sure?",
+            delMess: "Deletion cannot be undone. Are you sure?",
         },
     },
     log: {

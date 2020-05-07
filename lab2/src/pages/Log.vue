@@ -51,12 +51,12 @@ export default {
                 return;
             }
             if (newVal.length < 3) {
-                this.loginMess = this.$t("auth.formErros.less3sym");
+                this.loginMess = this.$t("auth.formErrors.less3sym");
                 this.isLoginValid = false;
             } else if (/[a-zA-Z]/i.test(newVal)) {
                 this.isLoginValid = true;
             } else {
-                this.loginMess = this.$t("auth.formErros.latinOnly");
+                this.loginMess = this.$t("auth.formErrors.latinOnly");
                 this.isLoginValid = false;
             }
         },
@@ -67,10 +67,10 @@ export default {
                 return;
             }
             if (/[а-яА-ЯёЁ]/i.test(newVal)) {
-                this.passMess = this.$t("auth.formErros.noCyr");
+                this.passMess = this.$t("auth.formErrors.noCyr");
                 this.isPassValid = false;
             } else if (newVal.length < 3) {
-                this.passMess = this.$t("auth.formErros.less3sym");
+                this.passMess = this.$t("auth.formErrors.less3sym");
                 this.isPassValid = false;
             } else {
                 this.isPassValid = true;
@@ -117,7 +117,7 @@ export default {
                     if (users[i].login == this.login) {
                         this.$q.notify({
                             color: "negative",
-                            message: this.$t("log.nt.wrLog"),
+                            message: this.$t("log.nt.wrPass"),
                         });
 
                         return;

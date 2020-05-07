@@ -52,3 +52,13 @@ export function setUserFuncs(context, funcs) {
     cu.funcs = funcs;
     context.dispatch("updateUser", cu);
 }
+
+export function getUserByLogin(context, log) {
+    let all = context.getters.getAllUsers;
+    for (let i = 0; i < all.length; ++i) {
+        if (all[i].login == log) {
+            return all[i];
+        }
+    }
+    return null;
+}

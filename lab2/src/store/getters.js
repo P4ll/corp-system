@@ -20,8 +20,12 @@ export function getAllUsers(state) {
 
 export function getAllUsersLogins(state) {
     let ans = [];
-    state.users.forEach(usr => {
+    state.users.forEach((usr) => {
         ans.push(usr.login);
     });
     return ans;
+}
+
+export function isAdmin(state) {
+    return state.current.isAdmin;
 }
