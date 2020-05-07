@@ -428,8 +428,12 @@ export default {
             let xx = [];
             let xlb = ((this.xMax - 10 * this.xScale) / 2) * -1;
             let xub = Math.abs(xlb);
+            let pp = 10;
 
-            for (let i = xlb; i <= xub; i += 10) {
+            if (this.xScale > 90) pp /= 2;
+            if (this.xScale > 95) pp /= 2;
+
+            for (let i = xlb; i <= xub; i += pp) {
                 xx.push(i);
             }
 
